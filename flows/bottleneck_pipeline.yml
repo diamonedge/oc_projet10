@@ -90,3 +90,8 @@ tasks:
       - test -f data/output/latest/premium_wines.csv
       - test -f data/output/latest/ordinary_wines.csv
       - wc -l data/output/latest/*.csv
+triggers:
+  - id: monthly_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 9 15 * *"
+    timezone: Europe/Paris        

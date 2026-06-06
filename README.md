@@ -1,6 +1,4 @@
-# oc_projet10
-
-# Projet 10 — Automatisation d’un pipeline de transformation et d’analyse avec Kestra
+# oc_projet10 — Automatisation d’un pipeline de transformation et d’analyse avec Kestra
 
 ## 1. Contexte du projet
 
