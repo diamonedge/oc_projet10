@@ -61,3 +61,8 @@ flowchart TD
     T6 --> R
     T7 --> R
 ```
+
+# Local Pipepline run
+```
+uv run python scripts/python/run_pipeline.py
+```
