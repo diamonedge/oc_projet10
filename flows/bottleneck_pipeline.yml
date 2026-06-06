@@ -1,3 +1,4 @@
+
 id: bottleneck_pipeline
 namespace: openclassrooms.projet10
 
@@ -7,7 +8,7 @@ description: >
   des vins premium.
 
 tasks:
-  - id: run_local_pipeline
+  - id: prepare_python_environment
     type: io.kestra.plugin.scripts.shell.Commands
     taskRunner:
       type: io.kestra.plugin.core.runner.Process
@@ -15,4 +16,77 @@ tasks:
       - cd /workspace/oc_projet10
       - rm -rf /tmp/oc_projet10_venv
       - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv sync --python 3.12
-      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/run_pipeline.py
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python --version
+
+  - id: clean_generated_files
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - rm -f data/output/working/bottleneck.duckdb
+      - rm -f data/output/latest/bottleneck_revenue_report.xlsx
+      - rm -f data/output/latest/premium_wines.csv
+      - rm -f data/output/latest/ordinary_wines.csv
+      - mkdir -p data/output/working data/output/latest
+      - echo "Fichiers générés supprimés."
+
+  - id: inspect_sources
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/01_inspect_sources.py
+
+  - id: load_staging_duckdb
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/02_load_staging_duckdb.py
+
+  - id: clean_sources
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/03_clean_sources_duckdb.py
+
+  - id: merge_and_compute_revenue
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/04_merge_and_compute_revenue.py
+
+  - id: segment_wines_by_zscore
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/05_segment_wines_by_zscore.py
+
+  - id: export_deliverables
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/06_export_deliverables.py
+
+  - id: check_outputs
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - ls -lh data/output/latest/
+      - test -f data/output/latest/bottleneck_revenue_report.xlsx
+      - test -f data/output/latest/premium_wines.csv
+      - test -f data/output/latest/ordinary_wines.csv
+      - wc -l data/output/latest/*.csv
