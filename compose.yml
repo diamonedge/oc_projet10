@@ -1,0 +1,18 @@
+services:
+  kestra:
+    image: kestra/kestra:latest
+    user: root
+    command: server local --config /etc/config/application.yaml
+    ports:
+      - "8080:8080"
+    volumes:
+      - kestra_data:/app/storage
+      - kestra_db:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/kestra-wd:/tmp/kestra-wd
+      - ./kestra/application.yaml:/etc/config/application.yaml:ro
+      - ./:/workspace/oc_projet10
+
+volumes:
+  kestra_data:
+  kestra_db:

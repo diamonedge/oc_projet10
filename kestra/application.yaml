@@ -1,0 +1,10 @@
+kestra:
+  tasks:
+    tmp-dir:
+      path: /tmp/kestra-wd/tmp
+
+  plugins:
+    configurations:
+      - type: io.kestra.plugin.scripts.runner.docker.Docker
+        values:
+          volumeEnabled: true
