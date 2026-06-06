@@ -2,6 +2,15 @@ import subprocess
 from pathlib import Path
 
 
+DUCKDB_PATH = Path("data/output/working/bottleneck.duckdb")
+
+GENERATED_FILES = [
+    DUCKDB_PATH,
+    Path("data/output/latest/bottleneck_revenue_report.xlsx"),
+    Path("data/output/latest/premium_wines.csv"),
+    Path("data/output/latest/ordinary_wines.csv"),
+]
+
 SCRIPTS = [
     "scripts/python/01_inspect_sources.py",
     "scripts/python/02_load_staging_duckdb.py",
@@ -10,6 +19,17 @@ SCRIPTS = [
     "scripts/python/05_segment_wines_by_zscore.py",
     "scripts/python/06_export_deliverables.py",
 ]
+
+
+def clean_generated_files() -> None:
+    print("=== Nettoyage des fichiers générés ===")
+
+    for path in GENERATED_FILES:
+        if path.exists():
+            path.unlink()
+            print(f"[OK] Supprimé : {path}")
+        else:
+            print(f"[INFO] Absent : {path}")
 
 
 def run_script(script_path: str) -> None:
@@ -27,10 +47,12 @@ def run_script(script_path: str) -> None:
 
 
 def main() -> None:
+    clean_generated_files()
+
     for script in SCRIPTS:
         run_script(script)
 
-    print("\nPipeline local exécuté avec succès.")
+    print("\nPipeline local exécuté avec succès depuis un état propre.")
 
 
 if __name__ == "__main__":
