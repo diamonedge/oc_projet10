@@ -2,7 +2,7 @@ from pathlib import Path
 
 import duckdb
 import pandas as pd
-
+import csv
 
 WORKING_DIR = Path("data/output/working")
 LATEST_DIR = Path("data/output/latest")
@@ -154,8 +154,8 @@ def main() -> None:
         summary_df.to_excel(writer, sheet_name="summary", index=False)
         revenue_df.to_excel(writer, sheet_name="revenue_by_product", index=False)
 
-    premium_df.to_csv(PREMIUM_WINES_PATH, index=False, encoding="utf-8")
-    ordinary_df.to_csv(ORDINARY_WINES_PATH, index=False, encoding="utf-8")
+    premium_df.to_csv(PREMIUM_WINES_PATH, index=False, encoding="utf-8",sep=";",quoting=csv.QUOTE_NONNUMERIC)
+    ordinary_df.to_csv(ORDINARY_WINES_PATH, index=False, encoding="utf-8",sep=";",quoting=csv.QUOTE_NONNUMERIC)
 
     print(f"[OK] Rapport CA exporté : {REVENUE_REPORT_PATH}")
     print(f"[OK] Vins premium exportés : {PREMIUM_WINES_PATH}")
