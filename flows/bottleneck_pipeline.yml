@@ -1,0 +1,18 @@
+id: bottleneck_pipeline
+namespace: openclassrooms.projet10
+
+description: >
+  Pipeline d'automatisation BottleNeck : ingestion, nettoyage,
+  rapprochement ERP/Web, calcul du chiffre d'affaires et segmentation
+  des vins premium.
+
+tasks:
+  - id: run_local_pipeline
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - cd /workspace/oc_projet10
+      - rm -rf /tmp/oc_projet10_venv
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv sync --python 3.12
+      - UV_PROJECT_ENVIRONMENT=/tmp/oc_projet10_venv uv run python scripts/python/run_pipeline.py
