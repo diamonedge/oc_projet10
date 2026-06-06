@@ -332,3 +332,15 @@ Nombre de vins ordinaires : 684
 ```
 
 Le pipeline est donc reproductible, contrôlé et orchestré par Kestra.
+
+## 16. Planification Kestra
+
+Le flow Kestra est planifié avec un trigger mensuel :
+
+```yaml
+triggers:
+  - id: monthly_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 9 15 * *"
+    timezone: Europe/Paris
+```
